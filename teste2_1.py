@@ -1,12 +1,3 @@
-"""
-Load a Tiled map file with Levels
-
-Artwork from: https://kenney.nl
-Tiled available from: https://www.mapeditor.org/
-
-If Python and Arcade are installed, this example can be run from the command line with:
-python -m arcade.examples.sprite_tiled_map_with_levels
-"""
 
 import os
 import time
@@ -22,14 +13,13 @@ SCREEN_TITLE = "Sprite Tiled Map with Levels Example"
 SPRITE_PIXEL_SIZE = 128
 GRID_PIXEL_SIZE = SPRITE_PIXEL_SIZE * TILE_SPRITE_SCALING
 
-# How many pixels to keep as a minimum margin between the character
-# and the edge of the screen.
+
 VIEWPORT_MARGIN_TOP = 60
 VIEWPORT_MARGIN_BOTTOM = 60
 VIEWPORT_RIGHT_MARGIN = 270
 VIEWPORT_LEFT_MARGIN = 270
 
-# Physics
+
 MOVEMENT_SPEED = 5
 JUMP_SPEED = 23
 GRAVITY = 1.1
@@ -44,17 +34,14 @@ class MyGame(arcade.Window):
         """
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
 
-        # Set the working directory (where we expect to find files) to the same
-        # directory this .py file is in. You can leave this out of your own
-        # code, but it is needed to easily run the examples using "python -m"
-        # as mentioned at the top of this program.
+
         file_path = os.path.dirname(os.path.abspath(__file__))
         os.chdir(file_path)
 
-        # Tilemap Object
+
         self.tile_map = None
 
-        # Sprite lists
+
         self.player_list = None
 
         # Set up the player
@@ -74,9 +61,9 @@ class MyGame(arcade.Window):
         self.max_level = 2
 
     def setup(self):
-        """Set up the game and initialize the variables."""
 
-        # Sprite lists
+
+
         self.player_list = arcade.SpriteList()
 
         # Set up the player
@@ -95,16 +82,16 @@ class MyGame(arcade.Window):
         self.game_over = False
 
     def load_level(self, level):
-        # layer_options = {"Platforms": {"use_spatial_hash": True}}
+
 
         # Read in the tiled map
         self.tile_map = arcade.load_tilemap(
             f":resources:tiled_maps/level_{level}.json", scaling=TILE_SPRITE_SCALING
         )
 
-        # --- Walls ---
 
-        # Calculate the right edge of the my_map in pixels
+
+
         self.end_of_map = self.tile_map.width * GRID_PIXEL_SIZE
 
         self.physics_engine = arcade.PhysicsEnginePlatformer(
@@ -113,27 +100,22 @@ class MyGame(arcade.Window):
             gravity_constant=GRAVITY,
         )
 
-        # --- Other stuff
-        # Set the background color
+
         if self.tile_map.background_color:
             arcade.set_background_color(self.tile_map.background_color)
 
-        # Set the view port boundaries
-        # These numbers set where we have 'scrolled' to.
+
         self.view_left = 0
         self.view_bottom = 0
 
     def on_draw(self):
-        """
-        Render the screen.
-        """
 
         self.frame_count += 1
 
-        # This command has to happen before we start drawing
+
         self.clear()
 
-        # Draw all the sprites.
+
         self.player_list.draw()
         self.tile_map.sprite_lists["Platforms"].draw()
 
@@ -153,9 +135,7 @@ class MyGame(arcade.Window):
         if self.frame_count % 60 == 0:
             self.last_time = time.time()
 
-        # Put the text on the screen.
-        # Adjust the text position based on the view port so that we don't
-        # scroll the text too.
+
         distance = self.player_sprite.right
         output = f"Distance: {distance:.0f}"
         arcade.draw_text(
@@ -172,9 +152,7 @@ class MyGame(arcade.Window):
             )
 
     def on_key_press(self, key, modifiers):
-        """
-        Called whenever the mouse moves.
-        """
+
         if key == arcade.key.UP:
             if self.physics_engine.can_jump():
                 self.player_sprite.change_y = JUMP_SPEED
@@ -184,14 +162,12 @@ class MyGame(arcade.Window):
             self.player_sprite.change_x = MOVEMENT_SPEED
 
     def on_key_release(self, key, modifiers):
-        """
-        Called when the user presses a mouse button.
-        """
+
         if key == arcade.key.LEFT or key == arcade.key.RIGHT:
             self.player_sprite.change_x = 0
 
     def on_update(self, delta_time):
-        """Movement and game logic"""
+
 
         if self.player_sprite.right >= self.end_of_map:
             if self.level < self.max_level:
@@ -204,24 +180,20 @@ class MyGame(arcade.Window):
             else:
                 self.game_over = True
 
-        # Call update on all sprites (The sprites don't do much in this
-        # example though.)
+
         if not self.game_over:
             self.physics_engine.update()
 
-        # --- Manage Scrolling ---
-
-        # Track if we need to change the view port
 
         changed = False
 
-        # Scroll left
+
         left_bndry = self.view_left + VIEWPORT_LEFT_MARGIN
         if self.player_sprite.left < left_bndry:
             self.view_left -= left_bndry - self.player_sprite.left
             changed = True
 
-        # Scroll right
+
         right_bndry = self.view_left + SCREEN_WIDTH - VIEWPORT_RIGHT_MARGIN
         if self.player_sprite.right > right_bndry:
             self.view_left += self.player_sprite.right - right_bndry
@@ -239,7 +211,7 @@ class MyGame(arcade.Window):
             self.view_bottom -= bottom_bndry - self.player_sprite.bottom
             changed = True
 
-        # If we need to scroll, go ahead and do it.
+
         if changed:
             self.view_left = int(self.view_left)
             self.view_bottom = int(self.view_bottom)
