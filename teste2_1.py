@@ -26,12 +26,10 @@ GRAVITY = 1.1
 
 
 class MyGame(arcade.Window):
-    """Main application class."""
+
 
     def __init__(self):
-        """
-        Initializer
-        """
+
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
 
 
